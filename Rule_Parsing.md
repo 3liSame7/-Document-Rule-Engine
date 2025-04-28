@@ -3,7 +3,7 @@
 ## **1\. Purpose**
 
 Define how an LLM should **convert plain-English business rules into a strict, machine-readable JSON schema**. This document captures:
-- The final, expert-refined **prompt templates**.
+- The **prompt templates**.
 - The **expected JSON rule format**.
 - **Illustrative examples** and how the LLM should respond.
 - **Operational notes** regarding LLM cost and scalability considerations.
