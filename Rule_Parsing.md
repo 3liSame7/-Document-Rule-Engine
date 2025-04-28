@@ -199,7 +199,14 @@ Total \> 5000 AND (contract\_date \>= "2025-01-01" OR NOT status \== "cancelled"
 
 ---
 
-## **5\. Notes**
+# **5. Operational Considerations**
+
+- **LLM Selection** considers **rate limits**, **API latency**, and **operational costs** depending on deployment scale.
+- Designed **prompting** to minimize token usage and ensure concise JSON outputs.
+  
+---
+
+## **6\. Notes**
 
 * Added `!=` for strict inequality checks.
 
