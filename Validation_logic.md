@@ -14,7 +14,7 @@ Define the engine and step-by-step logic that compares extracted document data a
 
   This validation module is implemented using:
 
-  - **Language:** Python 3.10+  
+  - **Language:** Python   
   - **Date/Time:** `datetime` (standard library)  
   - **Serialization:** `json` (standard library)  
   - **Logging:** `logging` or `structlog` for structured, context-rich logs  
@@ -28,9 +28,9 @@ Define the engine and step-by-step logic that compares extracted document data a
 ```
 ┌─────────────────┐
 │  Structured     │
-│  Rules          │   ┌─────────────────┐
-└────────┬────────┘───▶ Rule Dispatcher
-         │            └────────┬────────┘
+│  Rules          │    ┌─────────────────┐
+└────────┬────────┘───▶  Rule Dispatcher
+         │             └────────┬────────┘
 ┌────────▼────────┐             │
 │ Extracted Fields│             │
 └────────┬────────┘             │
@@ -40,20 +40,20 @@ Define the engine and step-by-step logic that compares extracted document data a
          │            │  Preprocessor      │
          │            │  (normalize types) │
          │            └────────┬───────────┘
-         │                      │
-         │                      ▼
+         │                     │
+         │                     ▼
          │            ┌────────────────────┐
          │            │  Atomic Evaluator  │
          │            │  (simple checks)   │
          │            └────────┬───────────┘
-         │                      │
-         │                      ▼
+         │                     │
+         │                     ▼
          │            ┌────────────────────┐
          │            │ Composite Evaluator│
          │            │ (AND/OR/NOT logic) │
          │            └────────┬───────────┘
-         │                      │
-         │                      ▼
+         │                     │
+         │                     ▼
          │            ┌────────────────────┐
          └───────────▶  Error Handler    
                       └────────┬───────────┘
@@ -83,55 +83,47 @@ Define the engine and step-by-step logic that compares extracted document data a
 ### **3.1 Structured Rule (Input)**
 
 
-    `{`  
-      `"rules": [`  
-        `{`  
-          `"field": "invoice_total",`  
-          `"target": null,                // or "payment_date" for field-to-field`  
-          `"operator": ">",`  
-          `"value": 1000,`  
-          `"logic": null,`  
-          `"sub_rules": null,`  
-          `"on_error": "warn_and_skip"`  
-        `},`  
-        `{`  
-          `"logic": "AND",`  
-          `"sub_rules": [ /* nested rules */ ]`  
-        `}`  
-      `]`  
-    `}`
+    {
+      "rules": [
+        {
+          "field": "invoice_total",
+          "target": null,
+          "operator": ">",
+          "value": 1000,
+          "logic": null,
+          "sub_rules": null,
+          "on_error": "warn_and_skip"
+        }
+      ]
+    }
+
 
 ### **3.2 Extracted Fields (Input)**
-  
-    `{`  
-      `"invoice_total": 875,`  
-      `"invoice_date": "2025-01-14",`  
-      `"payment_date": "2025-02-10"`  
-    `}`
+    
+      {
+    "invoice_total": 875,
+    "invoice_date": "2025-01-14",
+    "payment_date": "2025-02-10"
+    }
 
 ### **3.3 Validation Report (Output)**
  
-    `{`  
-      `"results": [`  
-        `{`  
-          `"rule": "invoice_total > 1000",`  
-          `"status": "FAIL",`  
-          `"actual": 875,`  
-          `"expected": "> 1000"`  
-        `},`  
-        `{`  
-          `"rule": "(invoice_date within_30_days payment_date)",`  
-          `"status": "PASS",`  
-          `"actual": 27,`  
-          `"expected": "≤ 30 days"`  
-        `}`  
-      `],`  
-      `"summary": {`  
-        `"total": 2,`  
-        `"passed": 1,`  
-        `"failed": 1`  
-      `}`  
-    `}`
+     {
+    "results": [
+      {
+        "rule": "invoice_total > 1000",
+        "status": "FAIL",
+        "actual": 875,
+        "expected": "> 1000"
+      }
+    ],
+    "summary": {
+      "total": 1,
+      "passed": 0,
+      "failed": 1
+    }
+  }
+
 
 ---
 
