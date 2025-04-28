@@ -198,15 +198,33 @@ Total \> 5000 AND (contract\_date \>= "2025-01-01" OR NOT status \== "cancelled"
     }
 
 ---
+# **5\. Selected LLM Tool for Rule Parsing**
 
-# **5. Operational Considerations**
+> **Chosen LLM API:** Llama 3.3 70B Instruct Turbo (via Hugging Face or Together AI Free Tier)
+
+**Reasons for Selection:**
+- **Free access** under generous quotas.
+- **Model:** Llama 3.3 70B Instruct Turbo — optimized for following instructions and structured outputs.
+- **Token limit:** Supports up to 8k–32k tokens depending on provider.
+- **Request/minute:** Typically ~10–20 requests per minute free on Together AI, depending on tier.
+- **Open-source model**: No vendor lock-in, easy customization.
+- **Cost Efficiency:** Saves ~$100–$500 monthly compared to using GPT-4 at similar usage levels.
+- **Instruction following:** Very strong when system prompts are carefully designed.
+
+**Alternative Considered:**
+- **OpenAI GPT-4**: Excellent JSON reliability and robustness. However, it requires paid API usage (~$0.003–$0.009 per 1k tokens), making it less suitable under the "free/public" constraint but could be used in a production environment later when budgets allow.
+
+✅ Llama 3.3 70B Instruct Turbo balances **quality**, **free access**, and **deployment flexibility**, making it the best fit for this project at this stage.
+
+---
+# **6\. Operational Considerations**
 
 - **LLM Selection** considers **rate limits**, **API latency**, and **operational costs** depending on deployment scale.
 - Designed **prompting** to minimize token usage and ensure concise JSON outputs.
   
 ---
 
-## **6\. Notes**
+## **7\. Notes**
 
 * Added `!=` for strict inequality checks.
 
