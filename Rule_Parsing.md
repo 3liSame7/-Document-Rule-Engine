@@ -205,8 +205,9 @@ Total \> 5000 AND (contract\_date \>= "2025-01-01" OR NOT status \== "cancelled"
 **Reasons for Selection:**
 - **Free access** under generous quotas.
 - **Model:** Llama 3.3 70B Instruct Turbo — optimized for following instructions and structured outputs.
-- **Token limit:** Supports up to 8k–32k tokens depending on provider.
-- **Request/minute:** Typically ~10–20 requests per minute free on Together AI, depending on tier.
+- **Token limit:** Supports up to up to 32k tokens.
+- **Request/minute:** ~20 requests per minute free on Together AI.
+- **latency:** around 0.26 seconds.
 - **Open-source model**: No vendor lock-in, easy customization.
 - **Cost Efficiency:** Saves ~$100–$500 monthly compared to using GPT-4 at similar usage levels.
 - **Instruction following:** Very strong when system prompts are carefully designed.
