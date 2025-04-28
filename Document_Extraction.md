@@ -7,28 +7,37 @@
 
 ---
 
-**2\. Q\&A Alignment**
+**2\. File extraction methods**
 
-**Question:** What tools and methods would you use to extract data from PDFs or images?  
- **Answer:**
+**tools and methods would used to extract data from PDFs or images:  
 
 * **Primary:** RAGFlow’s DeepDoc module, which combines vision and layout analysis to perform OCR on text blocks, tables, captions and more.
 
-* **Fallback:** PDFPlumber or PyMuPDF, for reliable text extraction, Tesseract OCR (with tuned language/model settings) for scanned images if DeepDoc’s confidence falls below 80 %.
+* **Fallback:** PDFPlumber for reliable text extraction, Tesseract OCR (with tuned language/model settings) for scanned images if DeepDoc’s confidence falls below 80 %.
 
-*Rationale:* DeepDoc handles complex, multi­format layouts end-to-end; PDFPlumber/Tesseract step in when confidence is low.
+**Extracting fields such as dates, totals, and names:  
 
-**Question:** How would you extract fields such as dates, totals, and names?  
- **Answer:**
+1. **DeepDoc Extraction (Primary Approach):**
+   - Use **RAGFlow’s DeepDoc** module as the main extractor for **field segmentation**.
+   - Leverages layout and vision analysis to automatically identify key fields like `invoice_total`, `contract_date`, and `signature_date`.
+   - Supports detection of:
+     - Text blocks (paragraphs, headings)
+     - Tables and key-value pairs
+     - Spatial relationships between fields and values
 
-1. **Template-Based Segmentation:** In RAGFlow, define regex or label templates for fields like invoice\_total, contract\_date, signature\_date, etc.
+2. **Template-Based Enhancements (Optional Layer):**
+   - Where DeepDoc's extraction is uncertain or layouts are highly variable, define regex or label-based templates to match fields like totals and dates.
 
-2. **DeepDoc Extraction:** Map the OCR/text outputs to these predefined fields.
+3. **Prompt-Driven Normalization (Fine-Tuning):**
+   - After extraction, optionally send field values to an LLM to:
+     - Normalize numbers (e.g., strip currency symbols).
+     - Convert date formats to ISO 8601 standard (`YYYY-MM-DD`).
+     - Correct common OCR artifacts.
 
-3. **Prompt-Driven Normalization:** Use an LLM prompt to verify and normalize each extracted value (for example, stripping currency symbols and converting dates to ISO format).
-
-4. **Confidence Threshold & Human Review:** Flag any extraction with confidence below 80 % for manual inspection in the RAGFlow UI.
-
+4. **Confidence Threshold & Human Review:**
+   - If DeepDoc’s extraction confidence is below 80%:
+     - Fallback to PDFPlumber or Tesseract OCR.
+     - Flag the document for human validation in the RAGFlow UI.
 ---
 
 **3\. RAGFlow as Primary Extraction Engine**
@@ -57,7 +66,7 @@
 
 **4.1 Server & Knowledge Base Setup**
 
-1. Deploy RAGFlow via Docker (version 0.18.0-slim or full) on an x86 host (or build for ARM). Ensure `vm.max_map_count` and resource prerequisites are met.
+1. Deploy RAGFlow via Docker.
 
 2. Configure the desired LLM and embedding models in `service_conf.yaml`.
 
@@ -95,14 +104,32 @@
   `"signature_date": "2025-01-14"`  
 `}`
 
-**4.4 Embedding & Indexing**
+## 4.4 Embedding & Indexing
 
-1. Embed each chunk using the selected model (for example, all-MiniLM-L6-v2).
+1. **Embedding Engine via RAGFlow:**
+   - After field segmentation, RAGFlow automatically embeds each document chunk into a dense semantic vector.
 
-2. Automatically index those embeddings in FAISS within RAGFlow for efficient semantic retrieval.
+2. **Chosen Embedding Model:**
+   - **Model:** `all-MiniLM-L6-v2` from Hugging Face's Sentence Transformers.
+   - **Why this model:**
+     - **Free** to use and open-source.
+     - **Lightweight (~80MB)**, suitable for CPU-based inference.
+     - **Embedding size:** 384 dimensions.
+     - Optimized for **semantic similarity** tasks.
 
-**4.5 Integration with Rule Engine**  
- Pass the structured `extracted_fields` along with their source chunks to the validation module. RAGFlow’s grounded citations allow each validated value to trace back to its exact location in the original document.
+3. **Vector Store Selected:**
+   - **FAISS (Facebook AI Similarity Search)**
+   - **Why FAISS:**
+     - Open-source and production-ready.
+     - Fast approximate nearest neighbor search.
+     - Supports both CPU and GPU acceleration.
+     - Scales to millions of embedded chunks efficiently.
+
+4. **How It Fits Together:**
+   - RAGFlow’s configuration (`service_conf.yaml`) is set to:
+     - Use `all-MiniLM-L6-v2` for embedding.
+     - Index the resulting vectors in FAISS.
+   - This enables high-speed semantic retrieval of document sections during validation or interactive querying.
 
 ---
 
